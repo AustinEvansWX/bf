@@ -14,7 +14,7 @@ gcc -o build/bf bf.c
 
 I have modified the output instruction to be two different instructions instead of just one.
 
-`.` Outputs to `stdout` as an **ASCII character**.
+`.` Outputs to `stdout` as an **ASCII character**.\n
 `:` Outputs to `stdout` as a **Decimal**.
 
 ## Fibbonacci
