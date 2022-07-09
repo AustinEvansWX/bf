@@ -3,100 +3,95 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define INS_INC_POINTER 62
-#define INS_DEC_POINTER 60
-#define INS_INC_CELL 43
-#define INS_DEC_CELL 45
-#define INS_OUTPUT_ASCII 46
-#define INS_OUTPUT_DECIMAL 58
-#define INS_INPUT 44
-#define INS_JUMP_FORWARD 91
-#define INS_JUMP_BACK 93
-
-void executeProgram(unsigned char* program, unsigned long programSize) {
-  unsigned int programCounter = 0;
-  unsigned int pointer = 0;
-  unsigned int tape[255] = {0};
+void executeProgram(char* program, unsigned long programSize) {
+  int programCounter = 0;
+  int pointer = 0;
+  unsigned char tape[255] = {0};
 
   while (programCounter < programSize) {
-    unsigned char instruction = program[programCounter];
+    char instruction = program[programCounter];
 
     switch (instruction) {
-    case INS_INC_POINTER: {
+    case '>': {
       pointer++;
       break;
     }
 
-    case INS_DEC_POINTER: {
+    case '<': {
       pointer--;
       break;
     }
 
-    case INS_INC_CELL: {
+    case '+': {
       tape[pointer]++;
       break;
     }
 
-    case INS_DEC_CELL: {
+    case '-': {
       tape[pointer]--;
       break;
     }
 
-    case INS_OUTPUT_ASCII: {
+    case '.': {
       fprintf(stdout, "%c", tape[pointer]);
       break;
     }
 
-    case INS_OUTPUT_DECIMAL: {
+    case ':': {
       fprintf(stdout, "%d", tape[pointer]);
       break;
     }
 
-    case INS_INPUT: {
-      unsigned char input;
+    case ',': {
+      char input;
       fprintf(stdout, "BF Program Requests Input: ");
       fscanf(stdin, "%c", &input);
       tape[pointer] = input;
       break;
     }
 
-    case INS_JUMP_FORWARD: {
-      if (tape[pointer]) {
+    case '[': {
+      if (tape[pointer] != 0)
         break;
-      }
 
-      unsigned int opened = 0;
+      int opened = 0;
+
       while (1) {
         programCounter++;
-        unsigned char instruction = program[programCounter];
-        if (instruction == INS_JUMP_FORWARD) {
+
+        char instruction = program[programCounter];
+
+        if (instruction == '[') {
           opened++;
-        } else if (instruction == INS_JUMP_BACK) {
-          if (!opened) {
+        } else if (instruction == ']') {
+          if (opened == 0)
             break;
-          }
+
           opened--;
         }
       }
+
       break;
     }
 
-    case INS_JUMP_BACK: {
-      if (!tape[pointer]) {
+    case ']': {
+      if (tape[pointer] == 0)
         break;
-      }
 
-      unsigned int closed = 0;
+      int opened = 0;
+
       while (1) {
         programCounter--;
-        unsigned char instruction = program[programCounter];
-        if (instruction == INS_JUMP_BACK) {
-          closed++;
-        } else if (instruction == INS_JUMP_FORWARD) {
-          if (!closed) {
+
+        char instruction = program[programCounter];
+
+        if (instruction == ']') {
+          opened++;
+        } else if (instruction == '[') {
+          if (opened == 0)
             break;
-          }
-          closed--;
+
+          opened--;
         }
       }
       break;
@@ -121,8 +116,8 @@ int main(int argc, char** argv) {
     exit(1);
   }
 
-  unsigned char program[1024];
-  unsigned long programSize = fread(program, sizeof(unsigned char), 1024, file);
+  char program[1024];
+  unsigned long programSize = fread(program, sizeof(char), 1024, file);
 
   if (ferror(file)) {
     fprintf(stderr, "ERROR: Cannot read file %s: %s\n", filePath, strerror(errno));
