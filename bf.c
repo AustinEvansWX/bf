@@ -4,8 +4,8 @@
 #include <string.h>
 
 void executeProgram(char* program, unsigned long programSize) {
-  int programCounter = 0;
-  int pointer = 0;
+  unsigned int programCounter = 0;
+  unsigned int pointer = 0;
   unsigned char tape[255] = {0};
 
   while (programCounter < programSize) {
@@ -94,6 +94,7 @@ void executeProgram(char* program, unsigned long programSize) {
           opened--;
         }
       }
+
       break;
     }
     }
