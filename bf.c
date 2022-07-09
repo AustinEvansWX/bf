@@ -3,13 +3,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-void executeProgram(char* program, unsigned long programSize) {
-  unsigned int programCounter = 0;
-  unsigned int pointer = 0;
+void executeProgram(unsigned char* program, unsigned long programSize) {
+  int programCounter = 0;
+  unsigned char pointer = 0;
   unsigned char tape[255] = {0};
 
   while (programCounter < programSize) {
-    char instruction = program[programCounter];
+    unsigned char instruction = program[programCounter];
 
     switch (instruction) {
     case '>': {
@@ -43,7 +43,7 @@ void executeProgram(char* program, unsigned long programSize) {
     }
 
     case ',': {
-      char input;
+      unsigned char input;
       fprintf(stdout, "BF Program Requests Input: ");
       fscanf(stdin, "%c", &input);
       tape[pointer] = input;
@@ -51,7 +51,7 @@ void executeProgram(char* program, unsigned long programSize) {
     }
 
     case '[': {
-      if (tape[pointer] != 0)
+      if (tape[pointer])
         break;
 
       int opened = 0;
@@ -59,7 +59,7 @@ void executeProgram(char* program, unsigned long programSize) {
       while (1) {
         programCounter++;
 
-        char instruction = program[programCounter];
+        unsigned char instruction = program[programCounter];
 
         if (instruction == '[') {
           opened++;
@@ -75,7 +75,7 @@ void executeProgram(char* program, unsigned long programSize) {
     }
 
     case ']': {
-      if (tape[pointer] == 0)
+      if (!tape[pointer])
         break;
 
       int opened = 0;
@@ -83,7 +83,7 @@ void executeProgram(char* program, unsigned long programSize) {
       while (1) {
         programCounter--;
 
-        char instruction = program[programCounter];
+        unsigned char instruction = program[programCounter];
 
         if (instruction == ']') {
           opened++;
@@ -117,7 +117,7 @@ int main(int argc, char** argv) {
     exit(1);
   }
 
-  char program[1024];
+  unsigned char program[1024];
   unsigned long programSize = fread(program, sizeof(char), 1024, file);
 
   if (ferror(file)) {
