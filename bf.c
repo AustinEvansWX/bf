@@ -33,18 +33,18 @@ void executeProgram(unsigned char* program, unsigned long programSize) {
     }
 
     case '.': {
-      fprintf(stdout, "%c", tape[pointer]);
+      printf("%c", tape[pointer]);
       break;
     }
 
     case ':': {
-      fprintf(stdout, "%d", tape[pointer]);
+      printf("%d", tape[pointer]);
       break;
     }
 
     case ',': {
-      fprintf(stdout, "BF Program Requests Input: ");
-      fscanf(stdin, "%c", &tape[pointer]);
+      printf("BF Program Requests Input: ");
+      scanf("%c", &tape[pointer]);
       break;
     }
 
